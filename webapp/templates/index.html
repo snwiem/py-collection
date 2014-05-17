@@ -18,11 +18,124 @@
     <![endif]-->
   </head>
   <body>
-    <h1>Hello, world!</h1>
+
+    <button data-bind="click: prevMovies">Prev</button>
+    <button data-bind="click: nextMovies">Next</button>
+    <div data-bind="foreach: movies">
+        <div style="float:left;"><img data-bind="attr: { src: cover, alt: title }"></div>
+    </div>
+    <div style="clear: both;">
+        <p><span data-bind="text: total"></span>/<span data-bind="text: start"></span>/<span data-bind="text: num"></span></p>
+    </div>
+    <button data-bind="click: loadGenres">Genres</button>
+    <ul data-bind="foreach: genres">
+        <li data-bind="text: $data['name']"></li>
+    </ul>
+
+    <button data-bind="click: loadRatings">Ratings</button>
+    <ul data-bind="foreach: ratings">
+        <li data-bind="text: $data"></li>
+    </ul>
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/knockout-3.1.0.js') }}"></script>
+
+    <script>
+        function getImageUrl(uid) {
+            // http://www.invelos.com/mpimages/50/5050582062564.5f.jpg
+            return "http://www.invelos.com/mpimages/"+uid.substr(0, 2)+"/"+uid+"f.jpg";
+        }
+
+        function MovieViewModel(data) {
+            var self = this;
+            self.id = ko.observable(data['id']);
+            self.uid = ko.observable(data['uid']);
+            self.title = ko.observable(data['title']);
+            self.cover = ko.computed(function() {
+               return getImageUrl(self.uid());
+            });
+        }
+
+        function AppViewModel() {
+            var self = this;
+
+            self.genres = ko.observableArray([]);
+            self.ratings = ko.observableArray([]);
+            self.movies = ko.observableArray([]);
+            self.start = ko.observable(0);
+            self.num = ko.observable(10);
+            self.total = ko.observable(0);
+
+            self.loadGenres = function() {
+                $.getJSON('/api/genres', function(data) {
+                    self.genres.removeAll();
+                    $.each(data['genres'], function(index, value) {
+                       self.genres.push(value);
+                    });
+                });
+            }
+
+            self.loadRatings = function() {
+                $.getJSON('/api/ratings', function(data) {
+                    self.ratings.removeAll();
+                    $.each(data['ratings'], function(index, value) {
+                       self.ratings.push(value);
+                    });
+                })
+            }
+
+            self.loadMovies = function() {
+                $.ajax({
+                    url: '/api/movies?s='+self.start()+'&n='+self.num(),
+                    type: 'POST',
+                    data: '{"fields": ["id", "uid", "title"]}',
+                    contentType: 'application/json',
+                    dataType: 'json',
+                    success: function(data) {
+                        console.log(JSON.stringify(data));
+                        self.total(data['total']);
+                        self.movies.removeAll();
+                        $.each(data['movies'], function(index, value) {
+                           self.movies.push(new MovieViewModel(value));
+                        });
+                    },
+                    error: function(data) {
+                        console.log("ERROR: " + data);
+                    }
+                });
+            }
+
+            self.prevMovies = function() {
+                if (self.start() - self.num() < 0) {
+                    self.start(self.total()-self.num());
+                } else {
+                    self.start(self.start()-self.num());
+                }
+                self.loadMovies();
+            }
+
+            self.nextMovies = function() {
+                if (self.start() + self.num() >= self.total()) {
+                    self.start(0);
+                } else {
+                    self.start(self.start()+self.num());
+                }
+                self.loadMovies();
+            }
+
+        }
+
+        var viewmodel = new AppViewModel();
+        ko.applyBindings(viewmodel);
+
+        $(document).ready(function() {
+            viewmodel.loadMovies();
+            viewmodel.loadGenres();
+            viewmodel.loadRatings();
+        })
+    </script>
   </body>
 </html>
