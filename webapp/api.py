@@ -28,3 +28,9 @@ def get_movies():
                 fields = data['fields']
     result = dao.select_movies(s, n, fields=fields)
     return jsonify(result), 200
+
+
+@app.route('/api/movie/<uid>', methods=['GET'])
+def get_details(uid):
+    movie = dao.select_movie_details(uid)
+    return jsonify(movie)

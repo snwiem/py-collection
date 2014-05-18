@@ -4,11 +4,21 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="shortcut icon" href="../../assets/ico/favicon.ico">
     <title>Bootstrap 101 Template</title>
 
     <!-- Bootstrap -->
     <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
     <link href="{{ url_for('static', filename='css/font-awesome.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/navbar-fixed-top.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/animate.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/site.css') }}" rel="stylesheet">
+    <!-- Just for debugging purposes. Don't actually copy this line! -->
+    <!--[if lt IE 9]>
+      <script src="{{ url_for('static', filename='js/ie8-responsive-file-warning.js') }}"></script>
+    <![endif]-->
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -17,45 +27,174 @@
       <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
   </head>
-  <body>
+  <body class="animated fadeInDown">
 
-    <button data-bind="click: prevMovies">Prev</button>
-    <button data-bind="click: nextMovies">Next</button>
-    <div data-bind="foreach: movies">
-        <div style="float:left;"><img data-bind="attr: { src: cover, alt: title }"></div>
+    <!-- Fixed navbar -->
+    <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">Project name</a>
+        </div>
+        <div class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            <li class="active"><a href="#">Home</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#contact">Contact</a></li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li><a href="#">Action</a></li>
+                <li><a href="#">Another action</a></li>
+                <li><a href="#">Something else here</a></li>
+                <li class="divider"></li>
+                <li class="dropdown-header">Nav header</li>
+                <li><a href="#">Separated link</a></li>
+                <li><a href="#">One more separated link</a></li>
+              </ul>
+            </li>
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="../navbar/">Default</a></li>
+            <li><a href="../navbar-static-top/">Static top</a></li>
+            <li class="active"><a href="./">Fixed top</a></li>
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
     </div>
-    <div style="clear: both;">
-        <p><span data-bind="text: total"></span>/<span data-bind="text: start"></span>/<span data-bind="text: num"></span></p>
-    </div>
-    <button data-bind="click: loadGenres">Genres</button>
-    <ul data-bind="foreach: genres">
-        <li data-bind="text: $data['name']"></li>
-    </ul>
 
-    <button data-bind="click: loadRatings">Ratings</button>
-    <ul data-bind="foreach: ratings">
-        <li data-bind="text: $data"></li>
-    </ul>
+
+    <div class="container">
+        <section id="coverflow">
+            <ul data-bind="foreach: movies" class="row cover" >
+                <li class="col-lg-2 col-md-2 col-sm-3 col-xs-4">
+                    <img data-bind="attr: { id: uid, src: front }" class="img-responsive img-thumbnail">
+                </li>
+            </ul>
+        </section>
+
+       <section id="details">
+            <div data-bind="with: details">
+                <img data-bind="attr: { src: front }">
+                <img data-bind="attr: { src: back }"><br>
+                <label>ID:</label><span data-bind="text: id"></span><br>
+                <label>UID:</label><span data-bind="text: uid"></span><br>
+                <label>Title:</label><span data-bind="text: title"></span><br>
+                <label>Rating:</label><span data-bind="text: rating"></span><br>
+                <label>Length:</label><span data-bind="text: length"></span><br>
+                <label>Year:</label><span data-bind="text: year"></span><br>
+                <label>Genres:</label><ul data-bind="foreach: genres"><li data-bind="text: name"></li></ul>
+                <label>Studios:</label><ul data-bind="foreach: studios"><li data-bind="text: name"></li></ul>
+                <label>Companies:</label><ul data-bind="foreach: companies"><li data-bind="text: name"></li></ul>
+                <label>Overview:</label><span data-bind="text: overview"></span><br>
+                <label>Roles:</label>
+                <ul data-bind="foreach: roles">
+                    <li>
+                        <span data-bind="text: fullname"></span>
+                        <!-- ko if: role -->
+                        as <b><span data-bind="text: role"></span></b>
+                        <!-- /ko -->
+                    </li>
+                </ul>
+                <label>Credits:</label>
+                <ul data-bind="foreach: credits">
+                    <li>
+                        <span data-bind="text: fullname"></span>
+                            <!-- ko if: creditType -->
+                            for <b><span data-bind="text: creditType"></span></b>
+                                <!-- ko if: creditSubtype -->
+                                (<i><span data-bind="text: creditSubtype"></span></i>)
+                                <!-- /ko -->
+                            <!-- /ko -->
+                    </li>
+                </ul>
+            </div>
+           <div style="text-align: center;">
+               <button id="closeDetailsButton" type="button" class="btn btn-primary btn-lg">Close</button>
+           </div>
+       </section>
+
+
+    </div>
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/knockout-3.1.0.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/jquery.touchSwipe.min.js') }}"></script>
 
     <script>
-        function getImageUrl(uid) {
+        function getImageUrl(uid, side) {
             // http://www.invelos.com/mpimages/50/5050582062564.5f.jpg
-            return "http://www.invelos.com/mpimages/"+uid.substr(0, 2)+"/"+uid+"f.jpg";
+            return "http://www.invelos.com/mpimages/"+uid.substr(0, 2)+"/"+uid+side+".jpg";
         }
+
+        function RoleViewModel(data) {
+            var self = this;
+            self.role = ko.observable(data['role'])
+            self.firstname = ko.observable(data['first_name'])
+            self.middlename = ko.observable(data['middle_name'])
+            self.lastname = ko.observable(data['last_name'])
+
+            self.fullname = ko.computed(function() {
+                var fullname = self.firstname() + " " + self.middlename() + " " + self.lastname();
+                fullname = fullname.replace(/\s+/g, " ");
+                return fullname;
+            });
+        }
+
+        function CreditViewModel(data) {
+            var self = this;
+            self.creditType = ko.observable(data['credit_type'])
+            self.creditSubtype = ko.observable(data['credit_subtype'])
+            self.firstname = ko.observable(data['first_name'])
+            self.middlename = ko.observable(data['middle_name'])
+            self.lastname = ko.observable(data['last_name'])
+
+            self.fullname = ko.computed(function() {
+                var fullname = self.firstname() + " " + self.middlename() + " " + self.lastname();
+                fullname = fullname.replace(/\s+/g, " ");
+                return fullname;
+            });
+        }
+
 
         function MovieViewModel(data) {
             var self = this;
             self.id = ko.observable(data['id']);
             self.uid = ko.observable(data['uid']);
             self.title = ko.observable(data['title']);
-            self.cover = ko.computed(function() {
-               return getImageUrl(self.uid());
+            self.overview = ko.observable(data['overview']);
+            self.rating = ko.observable(data['rating']);
+            self.length = ko.observable(data['length']);
+            self.year = ko.observable(data['year']);
+            self.genres = ko.observableArray(data['genres']);
+            self.studios = ko.observableArray(data['studios']);
+            self.companies = ko.observableArray(data['companies']);
+            self.roles = ko.observableArray();
+            if (data['roles']) {
+                $.each(data['roles'], function(index, value) {
+                    self.roles.push(new RoleViewModel(value));
+                });
+            }
+            self.credits = ko.observableArray();
+            if (data['credits']) {
+                $.each(data['credits'], function(index, value) {
+                    self.credits.push(new CreditViewModel(value));
+                });
+            }
+
+            self.front = ko.computed(function() {
+               return getImageUrl(self.uid(), 'f');
+            });
+            self.back = ko.computed(function() {
+               return getImageUrl(self.uid(), 'b');
             });
         }
 
@@ -65,9 +204,11 @@
             self.genres = ko.observableArray([]);
             self.ratings = ko.observableArray([]);
             self.movies = ko.observableArray([]);
+            self.details = ko.observable();
             self.start = ko.observable(0);
-            self.num = ko.observable(10);
+            self.num = ko.observable(12);
             self.total = ko.observable(0);
+
 
             self.loadGenres = function() {
                 $.getJSON('/api/genres', function(data) {
@@ -87,7 +228,7 @@
                 })
             }
 
-            self.loadMovies = function() {
+            self.loadMovies = function(callback) {
                 $.ajax({
                     url: '/api/movies?s='+self.start()+'&n='+self.num(),
                     type: 'POST',
@@ -101,6 +242,8 @@
                         $.each(data['movies'], function(index, value) {
                            self.movies.push(new MovieViewModel(value));
                         });
+                        if (callback)
+                            callback();
                     },
                     error: function(data) {
                         console.log("ERROR: " + data);
@@ -108,30 +251,121 @@
                 });
             }
 
-            self.prevMovies = function() {
+            self.loadDetails = function(uid) {
+                $.getJSON('/api/movie/'+uid, function(data) {
+                    //console.log(JSON.stringify(data));
+                    self.details(new MovieViewModel(data));
+                });
+            }
+
+            self.prevMovies = function(callback) {
                 if (self.start() - self.num() < 0) {
                     self.start(self.total()-self.num());
                 } else {
                     self.start(self.start()-self.num());
                 }
-                self.loadMovies();
+                self.loadMovies(callback);
             }
 
-            self.nextMovies = function() {
+            self.nextMovies = function(callback) {
                 if (self.start() + self.num() >= self.total()) {
                     self.start(0);
                 } else {
                     self.start(self.start()+self.num());
                 }
-                self.loadMovies();
+                self.loadMovies(callback);
+            }
+
+            function findMovieIndex(id) {
+                for (var idx = 0; idx < self.movies().length; ++idx) {
+                    if (self.movies()[idx].id() == id) {
+                        return idx;
+                    }
+                }
+            }
+            self.nextDetails = function() {
+                var currentId = self.details()['id']();
+                var index = findMovieIndex(currentId);
+                if (index >= self.movies().length-1) {
+                    self.nextMovies(function() {
+                        self.loadDetails(self.movies()[0].uid());
+                    });
+
+                } else {
+                    self.loadDetails(self.movies()[index+1].uid());
+                }
+
+            }
+            self.prevDetails = function() {
+                var currentId = self.details()['id']();
+                var index = findMovieIndex(currentId);
+                if (0 == index) {
+                    self.prevMovies(function() {
+                        self.loadDetails(self.movies()[self.movies().length-1].uid());
+                    });
+
+                } else {
+                    self.loadDetails(self.movies()[index-1].uid());
+                }
+
             }
 
         }
+
+
 
         var viewmodel = new AppViewModel();
         ko.applyBindings(viewmodel);
 
         $(document).ready(function() {
+            function navigate(event, direction) {
+                switch (direction) {
+                    case 'left':
+                        viewmodel.nextMovies();
+                        break;
+                    case 'right':
+                        viewmodel.prevMovies();
+                        break;
+                }
+            }
+
+            function details(event, direction) {
+                switch (direction) {
+                    case 'left':
+                        viewmodel.nextDetails();
+                        break;
+                    case 'right':
+                        viewmodel.prevDetails();
+                        break;
+                }
+            }
+
+            $('#coverflow').swipe({
+                tap: function(event, target) {
+                    if ( $(target).is('img') ) {
+                        viewmodel.loadDetails(target.id);
+                        $('#coverflow').toggle();
+                        $('#details').toggle();
+                    }
+
+                },
+                swipeLeft: navigate,
+                swipeRight: navigate,
+                allowPageScroll: 'auto'
+            });
+            $('#details').swipe({
+               swipeLeft: details,
+               swipeRight: details,
+               allowPageScroll: 'auto'
+            });
+
+            $('#closeDetailsButton').click(function() {
+                $('#coverflow').toggle();
+                $('#details').toggle();
+            });
+
+            $('#details').hide();
+
             viewmodel.loadMovies();
             viewmodel.loadGenres();
             viewmodel.loadRatings();

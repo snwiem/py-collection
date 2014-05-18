@@ -63,3 +63,19 @@ def select_movie_by_id(movie_id):
     query = "SELECT id, uid, title, original_title, overview, rating, length, year FROM movies WHERE id = ?"
     movie = query_db(query, one=True)
     return movie
+
+
+def select_movie_by_uid(movie_uid):
+    query = "SELECT id, uid, title, original_title, overview, rating, length, year FROM movies WHERE uid = ?"
+    movie = query_db(query, args=(movie_uid,), one=True)
+    return movie
+
+def select_movie_details(movie_uid):
+    movie = select_movie_by_uid(movie_uid)
+    if movie:
+        movie['genres'] = query_db("SELECT g.id, g.name FROM genres g, movie_genres mg WHERE mg.movie_id = ? AND mg.genre_id = g.id", args=(movie['id'],))
+        movie['roles'] = query_db("SELECT p.id AS person_id, r.role, p.first_name, p.middle_name, p.last_name, p.birth_year FROM roles r, persons p WHERE r.movie_id = ? AND r.person_id = p.id", args=(movie['id'],))
+        movie['credits'] = query_db("SELECT p.id AS person_id, c.credit_type, c.credit_subtype, p.first_name, p.middle_name, p.last_name, p.birth_year FROM credits c, persons p WHERE c.movie_id = ? AND c.person_id = p.id", args=(movie['id'],))
+        movie['studios'] = query_db("SELECT s.id, s.name FROM studios s, movie_studios ms WHERE ms.movie_id = ? AND ms.studio_id = s.id", args=(movie['id'],))
+        movie['companies'] = query_db("SELECT c.id, c.name FROM companies c, movie_companies mc WHERE mc.movie_id = ? AND mc.company_id = c.id", args=(movie['id'],))
+    return movie

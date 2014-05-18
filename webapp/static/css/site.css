@@ -1,0 +1,15 @@
+ul.cover {
+    padding: 0;
+    margin: 0;
+}
+
+ul.cover > li {
+    list-style: none;
+    margin-bottom: 25px;
+}
+
+ul.cover > li > img {
+    cursor: pointer;
+}
+
+
