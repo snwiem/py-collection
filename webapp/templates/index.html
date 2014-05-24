@@ -27,9 +27,10 @@
       <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
   </head>
-  <body class="animated fadeInDown">
+  <body>
 
     <!-- Fixed navbar -->
+
     <div class="navbar navbar-default navbar-fixed-top" role="navigation">
       <div class="container">
         <div class="navbar-header">
@@ -64,16 +65,15 @@
             <li><a href="../navbar-static-top/">Static top</a></li>
             <li class="active"><a href="./">Fixed top</a></li>
           </ul>
-        </div><!--/.nav-collapse -->
+        </div>
       </div>
     </div>
 
-
-    <div class="container">
+    <div class="container animated fadeInDown">
         <section id="coverflow">
             <ul data-bind="foreach: movies" class="row cover" >
                 <li class="col-lg-2 col-md-2 col-sm-3 col-xs-4">
-                    <img data-bind="attr: { id: uid, src: front }" class="img-responsive img-thumbnail">
+                    <img data-bind="attr: { id: uid, src: cover }" class="img-responsive img-thumbnail">
                 </li>
             </ul>
         </section>
@@ -91,7 +91,7 @@
                 <label>Genres:</label><ul data-bind="foreach: genres"><li data-bind="text: name"></li></ul>
                 <label>Studios:</label><ul data-bind="foreach: studios"><li data-bind="text: name"></li></ul>
                 <label>Companies:</label><ul data-bind="foreach: companies"><li data-bind="text: name"></li></ul>
-                <label>Overview:</label><span data-bind="text: overview"></span><br>
+                <label>Overview:</label><div data-bind="html: overview"></div><br>
                 <label>Roles:</label>
                 <ul data-bind="foreach: roles">
                     <li>
@@ -131,6 +131,11 @@
 
     <script>
         function getImageUrl(uid, side) {
+            // http://www.invelos.com/mpimages/50/5050582062564.5f.jpg
+            //return "http://www.invelos.com/mpimages/"+uid.substr(0, 2)+"/"+uid+side+".jpg";
+            return "/img/"+uid+side+".jpg";
+        }
+        function getImageUrl2(uid, side) {
             // http://www.invelos.com/mpimages/50/5050582062564.5f.jpg
             return "http://www.invelos.com/mpimages/"+uid.substr(0, 2)+"/"+uid+side+".jpg";
         }
@@ -190,11 +195,15 @@
                 });
             }
 
-            self.front = ko.computed(function() {
+            self.cover = ko.computed(function() {
                return getImageUrl(self.uid(), 'f');
             });
+
+            self.front = ko.computed(function() {
+               return getImageUrl2(self.uid(), 'f');
+            });
             self.back = ko.computed(function() {
-               return getImageUrl(self.uid(), 'b');
+               return getImageUrl2(self.uid(), 'b');
             });
         }
 
